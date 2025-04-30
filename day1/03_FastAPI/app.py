@@ -64,7 +64,14 @@ def load_model():
     """推論用のLLMモデルを読み込む"""
     global model  # グローバル変数を更新するために必要
     try:
-        device = "cuda" if torch.cuda.is_available() else "cpu"
+        # mps(Apple Silicon)またはcuda(他のGPU)を使用する
+        # device = "cuda" if torch.cuda.is_available() else "cpu"
+        if torch.cuda.is_available():
+            device = "cuda"
+        elif torch.backends.mps.is_available():
+            device = "mps"
+        else:
+            device = "cpu"
         print(f"使用デバイス: {device}")
         pipe = pipeline(
             "text-generation",
